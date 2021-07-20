@@ -193,6 +193,10 @@ func (c *errConn) Reserve(timeout time.Duration) (id uint64, body []byte, err er
 	return id, body, c.err
 }
 
+func (c *errConn) Release(id uint64, pri int, timeout time.Duration) (err error) {
+	return c.err
+}
+
 func (c *errConn) Close() (err error) {
 	return nil
 }
