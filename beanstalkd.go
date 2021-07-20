@@ -27,7 +27,7 @@ type Conn interface {
 
 	Reserve(timeout time.Duration) (id uint64, body []byte, err error)
 
-	Release(id uint64, delay time.Duration) (err error)
+	Release(id uint64, pri int, delay time.Duration) (err error)
 
 	Close() (err error)
 
