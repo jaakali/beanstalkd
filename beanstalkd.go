@@ -27,6 +27,8 @@ type Conn interface {
 
 	Reserve(timeout time.Duration) (id uint64, body []byte, err error)
 
+	Release(id uint64, delay time.Duration) (err error)
+
 	Close() (err error)
 
 	Error() (err error)
@@ -131,6 +133,23 @@ func (c *conn) Reserve(timeout time.Duration) (id uint64, body []byte, err error
 		return
 	}
 	body = body[:ls]
+	return
+}
+
+func (c *conn) Release(id uint64, pri int, delay time.Duration) (err error) {
+	err = c.tc.PrintfLine("release %d %d %d", id, pri, int(delay.Seconds()))
+	if err != nil {
+		c.err = fmt.Errorf("Release %w: %v", ErrNet, err.Error())
+		return
+	}
+	l, err := c.tc.ReadLine()
+	if err != nil {
+		c.err = fmt.Errorf("Release %w: %v", ErrNet, err.Error())
+		return
+	}
+	if l != "RELEASED" {
+		c.err = fmt.Errorf("Release %w: %v", ErrBk, l)
+	}
 	return
 }
 
